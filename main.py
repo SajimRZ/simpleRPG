@@ -4,7 +4,7 @@ from functools import wraps
 import os
 
 app = Flask(__name__, 
-            template_folder='templates', 
+            template_folder='Templates', 
             static_folder='static')
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'your-default-dev-secret-key')
 
