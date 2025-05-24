@@ -3,7 +3,9 @@ import random
 from functools import wraps
 import os
 
-app = Flask(__name__, template_folder=os.path.join(os.path.dirname(__file__), 'templates'), static_folder=os.path.join(os.path.dirname(__file__), 'static'))
+app = Flask(__name__, 
+            template_folder='templates', 
+            static_folder='static')
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'your-default-dev-secret-key')
 
 # Initialize game state
