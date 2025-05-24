@@ -39,6 +39,16 @@ def index():
     init_game()
     return render_template('index.html')
 
+def vercel_handler(request):
+    from flask import Response
+    with app.app_context():
+        response = app.full_dispatch_request()
+        return Response(
+            response.get_data(),
+            status=response.status_code,
+            headers=dict(response.headers)
+        )
+
 @app.route('/start_game', methods=['POST'])
 def start_game():
     init_game()
