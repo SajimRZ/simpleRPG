@@ -2,11 +2,13 @@
 
 {% block content %}
 <div class="container text-center mt-5">
-    <h1 class="display-4">Dungeon RPG</h1>
-    <p class="lead">Enter the dungeon and defeat enemies to grow stronger!</p>
+    <h1 class="display-4">RE: Ascending Zenith</h1>
+    <p class="lead">Welome, wanderer </p>
+          <p class="lead">Your journey begins here</p>
+         <p class="lead">Climb to the top if you can</p>
     
     <form action="{{ url_for('start_game') }}" method="POST">
-        <button type="submit" class="btn btn-primary btn-lg mt-3">Play</button>
+        <button type="submit" class="btn btn-primary btn-lg mt-3" style="font-size:2rem; padding: 1rem 3rem;">Start the Climb</button>
     </form>
     
     {% if not session.get('game_active') and session.get('player') and session['player']['hp'] <= 0 %}

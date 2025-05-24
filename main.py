@@ -170,9 +170,6 @@ def enemy_defeated():
         player['exp'] -= player['exp_to_level']
         player['exp_to_level'] = int(player['exp_to_level'] * 1.5)
         
-        # Add a new dice face at level up
-        new_face = max(player['dice']) + 1
-        player['dice'].append(new_face)
     
     session['dungeon']['enemy'] = None
     session['player'] = player
@@ -184,7 +181,7 @@ def upgrade():
     cost = int(request.form['cost'])
     
     player = session['player']
-    
+
     if player['gold'] >= cost:
         player['gold'] -= cost
         player['dice'][face_index] += 1
@@ -203,7 +200,6 @@ def buy_dice():
         player['dice_count'] += 1
         session['player'] = player
     
-    session['dungeon']['in_shop'] = False
     return redirect(url_for('dungeon'))
 
 @app.route('/rest', methods=['POST'])
@@ -215,16 +211,28 @@ def rest():
     if player['gold'] >= cost:
         player['gold'] -= cost
         player['hp'] = player['max_hp']
-        session['player'] = player
+    
+    session['player']['dice'] = player['dice']
+    session['player']['gold'] = player['gold']
     
     session['dungeon']['in_shop'] = False
+    enter_dungeon()
     return redirect(url_for('dungeon'))
 
 @app.route('/leave_shop', methods=['POST'])
 @game_active_required
 def leave_shop():
     session['dungeon']['in_shop'] = False
+    enter_dungeon()
     return redirect(url_for('dungeon'))
+
+@app.route('/quit', methods=['POST'])
+@game_active_required
+def quit():
+    
+    session.clear()
+    session['game_active'] = False
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.run(debug=True)

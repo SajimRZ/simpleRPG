@@ -5,6 +5,11 @@
     <div class="container-fluid">
         <span class="navbar-brand">Dungeon Floor: {{ session['dungeon'].floor }}</span>
     </div>
+    <div>
+        <form action="{{ url_for('quit') }}" method="POST" class="d-inline">
+            <button type="submit" class="btn btn-secondary">Leave</button>
+        </form>
+    </div>
 </nav>
 
 <div class="container mt-4">

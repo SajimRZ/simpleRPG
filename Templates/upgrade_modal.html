@@ -7,17 +7,17 @@
             </div>
             <div class="modal-body bg-dark text-white">
                 <p>Current dice faces: {{ session['player'].dice|sort }}</p>
-                <p>Cost to upgrade: 10 gold per +1</p>
+                <p>Cost to upgrade: 8 gold per +1</p>
                 
                 <div class="row bg-dark text-white p-2">
-                    {% for face in session['player'].dice|sort %}
+                    {% for face in range(session['player'].dice|length) %}
                         <div class="col-4 mb-3">
                             <form action="{{ url_for('upgrade') }}" method="POST">
-                                <input type="hidden" name="face_index" value="{{ loop.index0 }}">
+                                <input type="hidden" name="face_index" value="{{ face }}">
                                 <input type="hidden" name="cost" value="8">
                                 <button type="submit" class="btn btn-outline-primary w-100" 
                                     {% if session['player'].gold < 8 %}disabled{% endif %}>
-                                    {{ face }} → {{ face + 1 }}
+                                    {{ session['player'].dice[face] }} → {{ session['player'].dice[face] + 1 }}
                                 </button>
                             </form>
                         </div>

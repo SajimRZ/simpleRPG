@@ -25,7 +25,7 @@
                     <div class="card-body">
                         <h5 class="card-title">Rest</h5>
                         <p class="card-text">Fully restore your HP.</p>
-                        <p>Cost: 20 gold</p>
+                        <p>Cost: 10 gold</p>
                         <form action="{{ url_for('rest') }}" method="POST">
                             <button type="submit" class="btn btn-primary" 
                                 {% if session['player'].gold < 10 or session['player'].hp == session['player'].max_hp %}disabled{% endif %}>
