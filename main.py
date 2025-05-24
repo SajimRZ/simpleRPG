@@ -4,7 +4,7 @@ from functools import wraps
 import os
 
 app = Flask(__name__, template_folder=os.path.join(os.path.dirname(__file__), 'templates'), static_folder=os.path.join(os.path.dirname(__file__), 'static'))
-
+app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'your-default-dev-secret-key')
 
 # Initialize game state
 def init_game():
@@ -49,6 +49,7 @@ def vercel_handler(request):
             status=response.status_code,
             headers=dict(response.headers)
         )
+
 
 @app.route('/start_game', methods=['POST'])
 def start_game():
