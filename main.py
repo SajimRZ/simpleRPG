@@ -1,9 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 import random
 from functools import wraps
+import os
 
-app = Flask(__name__)
-app.secret_key = 'your_secret_key_here'
+app = Flask(__name__, template_folder=os.path.join(os.path.dirname(__file__), 'templates'), static_folder=os.path.join(os.path.dirname(__file__), 'static'))
+
 
 # Initialize game state
 def init_game():
