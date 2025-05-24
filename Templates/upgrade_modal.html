@@ -1,0 +1,32 @@
+<div class="modal fade" id="upgradeModal" tabindex="-1" aria-labelledby="upgradeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="upgradeModalLabel">Upgrade Dice Faces</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Current dice faces: {{ player.dice|sort }}</p>
+                <p>Cost to upgrade: 10 gold per +1</p>
+                
+                <div class="row">
+                    {% for face in player.dice|sort %}
+                        <div class="col-4 mb-3">
+                            <form action="{{ url_for('upgrade') }}" method="POST">
+                                <input type="hidden" name="face_index" value="{{ loop.index0 }}">
+                                <input type="hidden" name="cost" value="10">
+                                <button type="submit" class="btn btn-outline-primary w-100" 
+                                    {% if player.gold < 10 %}disabled{% endif %}>
+                                    {{ face }} → {{ face + 1 }}
+                                </button>
+                            </form>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
