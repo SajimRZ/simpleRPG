@@ -35,7 +35,7 @@ def game_active_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-@app.route('/')
+@app.route('/',methods=["GET", "POST"])
 def index():
     init_game()
     return render_template('index.html')
