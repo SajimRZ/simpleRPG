@@ -3,54 +3,64 @@
 {% block content %}
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
-        <span class="navbar-brand">Dungeon Floor: {{ dungeon.floor }}</span>
-        <div class="navbar-text">
-            Level: {{ player.level }} | 
-            Gold: {{ player.gold }} | 
-            EXP: {{ player.exp }}/{{ player.exp_to_level }} | 
-            HP: {{ player.hp }}/{{ player.max_hp }}
-        </div>
+        <span class="navbar-brand">Dungeon Floor: {{ session['dungeon'].floor }}</span>
     </div>
 </nav>
 
 <div class="container mt-4">
-    {% if dungeon.in_shop %}
+    {% if session['dungeon'].in_shop %}
         {% include 'shop.html' %}
     {% else %}
         <div class="row justify-content-center">
             <div class="col-md-6 text-center">
                 <div class="card mb-4">
                     <div class="card-header bg-danger text-white">
-                        <h3>{{ dungeon.enemy.name }}</h3>
+                        <h3>{{ session['dungeon'].enemy.name }}</h3>
                     </div>
-                    <div class="card-body">
-                        <div class="progress mb-3">
-                            <div class="progress-bar bg-danger" role="progressbar"
-                                 
-                                 aria-valuenow="{{ dungeon.enemy.hp }}"
-                                 aria-valuemin="0"
-                                 aria-valuemax="{{ dungeon.enemy.max_hp }}">
-                                {{ dungeon.enemy.hp }}/{{ dungeon.enemy.max_hp }} HP
-                            </div>
-                        </div>
-                        
-                        {% if player_rolls %}
-                            <div class="alert alert-info">
-                                <p>You rolled: {{ player_rolls }} (Total: {{ player_damage }})</p>
-                                <p>Enemy rolled: {{ enemy_rolls }} (Total: {{ enemy_damage }})</p>
-                            </div>
-                        {% endif %}
+                    <div class="card-body text-white">
+                        <strong style="font-size: 1.5em;">HP:</strong>
+                        <span style="font-size: 1.5em;">{{ session['dungeon'].enemy.hp }}/{{ session['dungeon'].enemy.max_hp }}</span><br>                           
                     </div>
                 </div>
-                
-                <div class="d-grid gap-2">
-                    <form action="{{ url_for('attack') }}" method="POST" class="d-inline">
-                        <button type="submit" class="btn btn-primary btn-lg">Attack</button>
-                    </form>
-                    
-                    <button type="button" class="btn btn-secondary btn-lg" data-bs-toggle="modal" data-bs-target="#upgradeModal">
-                        Upgrade Dice
-                    </button>
+            </div>
+        </div>
+        
+        <div class="row justify-content-center mb-4">
+            <div class="col-md-6 text-center">
+                {% if player_rolls %}
+                    <div class="alert alert-info">
+                        <p style="font-size: 1.25em; color: rgb(23, 87, 23);">You rolled: {{ player_rolls }} (Total: {{ player_damage }})</p>
+                        <p style="font-size: 1.25em; color: rgb(155, 7, 27);">Enemy rolled: {{ enemy_rolls }} (Total: {{ enemy_damage }})</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="row mb-3 justify-content-center">
+            <div class="col-md-6 col-lg-5 mb-4 order-lg-1">
+                <div class="card bg-dark text-white h-100">
+                    <h3 class="card-header">Wanderer</h3>
+                    <div class="card-body">
+                        <strong style="font-size: 1.5em;">HP:</strong>
+                        <span style="font-size: 1.5em;">{{ session['player'].hp }}/{{ session['player'].max_hp }}</span><br>
+                        <strong>Level:</strong> {{ session['player'].level }}<br>
+                        <strong>Gold:</strong> {{ session['player'].gold }}<br>
+                        <strong>EXP:</strong> {{ session['player'].exp }}/{{ session['player'].exp_to_level }}<br>
+                        <strong>Dice Faces:</strong> {{ session['player'].dice|sort }} 
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-5 mb-4 order-lg-2">
+                <div class="card bg-dark text-white h-100">
+                    <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                        <div class="d-grid gap-2 w-100">
+                            <form action="{{ url_for('attack') }}" method="POST" class="d-inline">
+                            <button type="submit" class="btn btn-primary btn-lg w-100">Attack</button>
+                            </form>
+                            <button type="button" class="btn btn-secondary btn-lg w-100" data-bs-toggle="modal" data-bs-target="#upgradeModal">
+                            Upgrade Dice
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

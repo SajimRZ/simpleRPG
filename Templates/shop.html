@@ -9,11 +9,11 @@
                     <div class="card-body">
                         <h5 class="card-title">Extra Dice</h5>
                         <p class="card-text">Roll an additional dice when attacking.</p>
-                        <p>Cost: {{ 50 * player.dice_count }} gold</p>
+                        <p>Cost: {{ 50 * session['player'].dice_count }} gold</p>
                         <form action="{{ url_for('buy_dice') }}" method="POST">
                             <button type="submit" class="btn btn-primary" 
-                                {% if player.gold < 50 * player.dice_count %}disabled{% endif %}>
-                                Buy ({{ player.dice_count }} → {{ player.dice_count + 1 }})
+                                {% if session['player'].gold < 50 * session['player'].dice_count %}disabled{% endif %}>
+                                Buy ({{ session['player'].dice_count }} → {{ session['player'].dice_count + 1 }})
                             </button>
                         </form>
                     </div>
@@ -28,8 +28,8 @@
                         <p>Cost: 20 gold</p>
                         <form action="{{ url_for('rest') }}" method="POST">
                             <button type="submit" class="btn btn-primary" 
-                                {% if player.gold < 20 or player.hp == player.max_hp %}disabled{% endif %}>
-                                Rest ({{ player.hp }} → {{ player.max_hp }})
+                                {% if session['player'].gold < 10 or session['player'].hp == session['player'].max_hp %}disabled{% endif %}>
+                                Rest ({{ session['player'].hp }} → {{ session['player'].max_hp }})
                             </button>
                         </form>
                     </div>

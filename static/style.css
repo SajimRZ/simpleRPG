@@ -1,11 +1,12 @@
 body {
-    background-color: #f8f9fa;
+    background-color: #262c31;
+    color: #fff;
 }
 
 .container-box {
-    background-color: white;
+    background-color: rgb(40, 39, 43);
     border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 10px rgba(175, 173, 173, 0.1);
     padding: 20px;
     margin-top: 20px;
 }
@@ -27,9 +28,11 @@ body {
 .card {
     margin-bottom: 20px;
     border: none;
+    background-color: #343a40;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .card-header {
+    
     font-weight: bold;
 }

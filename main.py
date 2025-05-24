@@ -95,11 +95,15 @@ def attack():
         session['game_active'] = False
         return redirect(url_for('index'))
     
+    session['player'] = player
+    session['dungeon']['enemy'] = enemy
+    
     return render_template('dungeon.html', 
                          player_rolls=rolls, 
                          player_damage=player_damage,
                          enemy_rolls=enemy_rolls,
-                         enemy_damage=enemy_damage)
+                         enemy_damage=enemy_damage
+                         )
 
 def enter_dungeon():
     dungeon = session['dungeon']
@@ -116,9 +120,9 @@ def enter_dungeon():
     session['dungeon'] = dungeon
 
 def generate_enemy(floor):
-    base_hp = 10 + floor * 5
-    base_dice = [1 + floor // 3, 2 + floor // 3, 3 + floor // 3, 
-                 4 + floor // 3, 5 + floor // 3, 6 + floor // 3]
+    base_hp = 5 + floor * 5
+    base_dice = [1 + floor // 3, 2 + floor // 4, 3 + floor // 4, 
+                 4 + floor // 5, 5 + floor // 5, 6 + floor // 3]
     
     # Higher floors have a chance for multiple dice
     dice_count = 1
@@ -133,8 +137,8 @@ def generate_enemy(floor):
         'max_hp': base_hp,
         'dice': base_dice,
         'dice_count': dice_count,
-        'gold_reward': 5 + floor * 2,
-        'exp_reward': 3 + floor
+        'gold_reward': random.randint(5, 10) + floor * 2,
+        'exp_reward': random.randint(5, 10) + floor
     }
 
 def enemy_defeated():
@@ -192,7 +196,7 @@ def buy_dice():
 @game_active_required
 def rest():
     player = session['player']
-    cost = 20
+    cost = 10
     
     if player['gold'] >= cost:
         player['gold'] -= cost
