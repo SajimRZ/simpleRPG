@@ -134,26 +134,14 @@ def enter_dungeon():
     session['dungeon'] = dungeon
 
 def generate_enemy(floor):
-    base_hp = 5 + floor * 5
-    base_dice = [1 + floor // 3, 2 + floor // 4, 3 + floor // 4, 
-                 4 + floor // 5, 5 + floor // 5, 6 + floor // 3]
+
+    enemy_index = enemy_stats()
+    if floor < 10:
+        enemy_type = enemy_index[random.randint(0,6)]
+    else:
+        enemy_type = enemy_index[random.randint(0, 6)]
     
-    # Higher floors have a chance for multiple dice
-    dice_count = 1
-    if floor >= 10 and random.random() < 0.3:
-        dice_count = 2
-    if floor >= 20 and random.random() < 0.2:
-        dice_count = 3
-    
-    return {
-        'name': random.choice(['Goblin', 'Orc', 'Skeleton', 'Zombie', 'Spider', 'Troll']),
-        'hp': base_hp,
-        'max_hp': base_hp,
-        'dice': base_dice,
-        'dice_count': dice_count,
-        'gold_reward': random.randint(5, 10) + floor * 2,
-        'exp_reward': random.randint(5, 10) + floor
-    }
+    return enemy_type
 
 def enemy_defeated():
     player = session['player']
@@ -233,6 +221,21 @@ def quit():
     session.clear()
     session['game_active'] = False
     return redirect(url_for('index'))
+
+def enemy_stats():
+    enemy_index = {
+        0: {'name': 'Fuzzy Rat', 'hp': 5, 'max_hp': 5, 'dice': [1,1,2,2,3], 'dice_count': 1, 'gold_reward': random.randint(6,10), 'exp_reward':  random.randint(6,10)},
+        1: {'name': 'Blue Slime', 'hp': 5, 'max_hp': 5, 'dice': [1,1,2,6], 'dice_count': 1, 'gold_reward':  random.randint(3,5), 'exp_reward':  random.randint(3,6)},
+        2: {'name': 'Blind Bat', 'hp': 6, 'max_hp': 6, 'dice': [3,3,5], 'dice_count': 1, 'gold_reward':  random.randint(5,7), 'exp_reward':  random.randint(6,10)},
+        3: {'name': 'Fresh Zombie', 'hp': 12, 'max_hp': 12, 'dice': [1,1,2,6,6], 'dice_count': 1, 'gold_reward':  random.randint(5,8), 'exp_reward':  random.randint(3,6)},
+        4: {'name': 'Floating Helmet', 'hp': 9, 'max_hp': 9, 'dice': [2,2,2,4,4,5], 'dice_count': 1, 'gold_reward':  random.randint(8,10), 'exp_reward':  random.randint(8,12)},
+        5: {'name': 'Small Fireball', 'hp': 8, 'max_hp': 8, 'dice': [4,4,6,1,7], 'dice_count': 1, 'gold_reward':  random.randint(3,6), 'exp_reward':  random.randint(6,8)},
+        6: {'name': 'Skeleton', 'hp': 15, 'max_hp': 15, 'dice': [1,2,2,4,4,5,5,5,6], 'dice_count': 1, 'gold_reward':  random.randint(10,15), 'exp_reward':  random.randint(10,15)},
+        
+    }
+    return enemy_index
+    
+
 
 if __name__ == '__main__':
     app.run(debug=True)
