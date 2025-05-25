@@ -140,7 +140,7 @@
                         <p style="font-size: 1.25em; color: rgb(23, 87, 23);">You rolled: {{ player_rolls }} (Total: {{ player_damage }})</p>
                     </div>
                 {% elif enemy_rolls %}
-                    <div class="alert alert-info">
+                    <div class="alert alert-secondary">
                         <p style="font-size: 1.25em; color: rgb(155, 7, 27);">Enemy rolled: {{ enemy_rolls }} (Total: {{ enemy_damage }})</p>
                     </div>
                 {% endif %}
@@ -161,6 +161,7 @@
         </div>
         <div class="row mb-3 justify-content-center">
             <div class="col-md-6 col-lg-5 mb-4 order-lg-1">
+                <!-- Player Information -->
                 <div class="card bg-dark text-white h-100">
                     <h3 class="card-header">Wanderer</h3>
                     <div class="card-body">
@@ -177,12 +178,15 @@
                 <div class="card bg-dark text-white h-100">
                     <div class="card-body d-flex flex-column justify-content-center align-items-center">
                         <div class="d-grid gap-2 w-100">
-                            <form action="{{ url_for('action') }}" method="POST" class="d-inline">
-                                {% if session['turn'] == 'player' %}
+                            <!--All in one button -->
+                            <form action="{{ url_for('action') }}" id="actionForm" method="POST" class="d-inline">
+                                {% if session['turn'] == 'player' %}  <!-- Player push button to attack the enemy -->
                                     <button type="submit" class="btn btn-primary btn-lg w-100">Attack</button>
                                 {% elif session['turn'] == 'enemy' %}
-                                    <button type="submit" class="btn btn-danger btn-lg w-100">Enemy Turn</button>
+                                    <!-- Push button to take damage like a good turn based boy -->
+                                    <button type="submit" id = "enemyTurnButton" class="btn btn-danger btn-lg w-100">Enemy Turn</button>
                                 {% elif session['turn'] == 'inter' %}
+                                    <!-- Push button to end turn and go back to player turn -->
                                     <button type="submit" class="btn btn-info btn-lg w-100">Confirm</button>
                                 {% endif %}
                                     
@@ -196,6 +200,30 @@
             </div>
         </div>
         
+        {% if session['turn'] == 'enemy' %}
+        <script>
+            //Auto Submit after some time In case lazzy and too tired to click
+            document.addEventListener('DOMContentLoaded', function() {
+                setTimeout(function() {
+                    document.getElementById('actionForm').submit();
+                }, 2500); // 2500 milliseconds = 2.5 seconds
+                
+                //Update button text to show countdown
+                const enemyButton = document.getElementById('enemyTurnButton');
+                let secondsLeft = 3; // cose enough to 2.5 :D
+                enemyButton.textContent = `Enemy Turn (${secondsLeft}s)`;
+                
+                const countdown = setInterval(function() {
+                    secondsLeft--;
+                    enemyButton.textContent = `Enemy Turn (${secondsLeft}s)`;
+                    if (secondsLeft <= 0) {
+                        clearInterval(countdown);
+                    }
+                }, 1000);
+            });
+        </script>
+        {% endif %}
+
         {% include 'upgrade_modal.html' %}
     {% endif %}
 </div>
