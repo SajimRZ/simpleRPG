@@ -5,9 +5,9 @@
     <div class="container-fluid">
         <span class="navbar-brand">Dungeon Floor: {{ session['dungeon'].floor }}</span>
     </div>
-    <div>
+    <div style="margin-left: -20px;"></div>
         <form action="{{ url_for('quit') }}" method="POST" class="d-inline">
-            <button type="submit" class="btn btn-secondary">Leave</button>
+            <button type="submit" class="btn btn-danger"> Leave </button>
         </form>
     </div>
 </nav>
@@ -35,7 +35,23 @@
                 {% if player_rolls %}
                     <div class="alert alert-info">
                         <p style="font-size: 1.25em; color: rgb(23, 87, 23);">You rolled: {{ player_rolls }} (Total: {{ player_damage }})</p>
+                    </div>
+                {% elif enemy_rolls %}
+                    <div class="alert alert-info">
                         <p style="font-size: 1.25em; color: rgb(155, 7, 27);">Enemy rolled: {{ enemy_rolls }} (Total: {{ enemy_damage }})</p>
+                    </div>
+                {% endif %}
+                {% if session['turn'] == 'player' %}
+                    <div class="alert alert-primary">
+                        <p style="font-size: 1.25em;">It's your turn! Roll the dice to attack.</p>
+                    </div>
+                {% elif session['turn'] == 'enemy' %}
+                    <div class="alert alert-danger">
+                        <p style="font-size: 1.25em;">Enemy is attacking!</p>
+                    </div>
+                {% elif session['turn'] == 'inter' %}
+                    <div class="alert alert-warning">
+                        <p style="font-size: 1.25em;">Turn Finished</p>
                     </div>
                 {% endif %}
             </div>
@@ -58,8 +74,15 @@
                 <div class="card bg-dark text-white h-100">
                     <div class="card-body d-flex flex-column justify-content-center align-items-center">
                         <div class="d-grid gap-2 w-100">
-                            <form action="{{ url_for('attack') }}" method="POST" class="d-inline">
-                            <button type="submit" class="btn btn-primary btn-lg w-100">Attack</button>
+                            <form action="{{ url_for('action') }}" method="POST" class="d-inline">
+                                {% if session['turn'] == 'player' %}
+                                    <button type="submit" class="btn btn-primary btn-lg w-100">Attack</button>
+                                {% elif session['turn'] == 'enemy' %}
+                                    <button type="submit" class="btn btn-danger btn-lg w-100">Enemy Turn</button>
+                                {% elif session['turn'] == 'inter' %}
+                                    <button type="submit" class="btn btn-info btn-lg w-100">Confirm</button>
+                                {% endif %}
+                                    
                             </form>
                             <button type="button" class="btn btn-secondary btn-lg w-100" data-bs-toggle="modal" data-bs-target="#upgradeModal">
                             Upgrade Dice

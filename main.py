@@ -27,6 +27,7 @@ def init_game():
         'in_shop': False
     }
     session['game_active'] = False
+    session['turn'] = 'player'
 
 # Decorator to ensure game is active for certain routes
 def game_active_required(f):
@@ -67,9 +68,9 @@ def dungeon():
         enter_dungeon()
     return render_template('dungeon.html')
 
-@app.route('/attack', methods=['POST'])
+@app.route('/action', methods=['POST'])
 @game_active_required
-def attack():
+def action():
     player = session['player']
     dungeon = session['dungeon']
     
@@ -78,36 +79,54 @@ def attack():
     
     enemy = dungeon['enemy']
     
-    # Player's turn
+    #player roll prep
     rolls = []
     total_damage = 0
-    for _ in range(player['dice_count']):
-        roll = random.choice(player['dice'])
-        rolls.append(roll)
-        total_damage += roll
-    
-    enemy['hp'] -= total_damage
-    player_damage = total_damage
-    
-    # Check if enemy is defeated
-    if enemy['hp'] <= 0:
-        enemy_defeated()
-        return redirect(url_for('dungeon'))
-    
-    # Enemy's turn
+    player_damage = 0
+    #enemy roll prep
     enemy_rolls = []
     enemy_damage = 0
-    for _ in range(enemy['dice_count']):
-        roll = random.choice(enemy['dice'])
-        enemy_rolls.append(roll)
-        enemy_damage += roll
     
-    player['hp'] -= enemy_damage
+    #turn rotation
+    if session['turn'] == 'player':
+        # Player's turn
+        
+        for _ in range(player['dice_count']):
+            roll = random.choice(player['dice'])
+            rolls.append(roll)
+            total_damage += roll 
+
+            #damage calculation
+            enemy['hp'] -= total_damage
+            player_damage = total_damage
+            
+            # Check if enemy is defeated
+            if enemy['hp'] <= 0:
+                enemy_defeated()
+                return redirect(url_for('dungeon'))
+        #observe the turn change
+        session['turn'] = 'enemy'
+
+    elif session['turn'] == 'enemy':
     
-    # Check if player is defeated
-    if player['hp'] <= 0:
-        session['game_active'] = False
-        return redirect(url_for('index'))
+        # Enemy's turn
+       
+        for _ in range(enemy['dice_count']):
+            roll = random.choice(enemy['dice'])
+            enemy_rolls.append(roll)
+            enemy_damage += roll
+        
+        player['hp'] -= enemy_damage
+        
+        # Check if player is defeated
+        if player['hp'] <= 0:
+            session['game_active'] = False
+            return redirect(url_for('index'))
+        #observe the turn change
+        session['turn'] = 'inter'
+    elif session['turn'] == 'inter':
+        # Intermission turn, just switch back to player
+        session['turn'] = 'player'
     
     session['player'] = player
     session['dungeon']['enemy'] = enemy
@@ -116,7 +135,7 @@ def attack():
                          player_rolls=rolls, 
                          player_damage=player_damage,
                          enemy_rolls=enemy_rolls,
-                         enemy_damage=enemy_damage
+                         enemy_damage=enemy_damage,
                          )
 
 def enter_dungeon():
