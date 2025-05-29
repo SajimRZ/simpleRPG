@@ -61,6 +61,7 @@ def start_game():
     enter_dungeon()
     return redirect(url_for('dungeon'))
 
+#The Dungeon Screen
 @app.route('/dungeon')
 @game_active_required
 def dungeon():
@@ -68,6 +69,7 @@ def dungeon():
         enter_dungeon()
     return render_template('dungeon.html')
 
+#All in one button
 @app.route('/action', methods=['POST'])
 @game_active_required
 def action():
@@ -78,6 +80,9 @@ def action():
         return redirect(url_for('dungeon'))
     
     enemy = dungeon['enemy']
+    enemy_name = enemy['name'] if enemy else 'No Enemy'
+    enemy_xp = enemy['exp_reward'] if enemy else 0
+    enemy_gold = enemy['gold_reward'] if enemy else 0
     
     #player roll prep
     rolls = []
@@ -103,7 +108,16 @@ def action():
             # Check if enemy is defeated
             if enemy['hp'] <= 0:
                 enemy_defeated()
-                return redirect(url_for('dungeon'))
+                #return redirect(url_for('dungeon'))
+                return render_template('dungeon.html', 
+                         player_rolls=rolls, 
+                         player_damage=player_damage,
+                         enemy_rolls=enemy_rolls,
+                         enemy_damage=enemy_damage,
+                         enemy_name=enemy_name,
+                         enemy_exp=enemy_xp,
+                         enemy_gold=enemy_gold
+                         )
         #observe the turn change
         session['turn'] = 'enemy'
 
@@ -124,9 +138,15 @@ def action():
             return redirect(url_for('index'))
         #observe the turn change
         session['turn'] = 'inter'
+
     elif session['turn'] == 'inter':
         # Intermission turn, just switch back to player
+        session['turn'] = 'player'      
+    elif session['turn'] == 'reward':
+        # Reward turn, just switch back to player
+        session['dungeon']['enemy'] = None  # Clear enemy after reward
         session['turn'] = 'player'
+        return redirect(url_for('dungeon'))     
     
     session['player'] = player
     session['dungeon']['enemy'] = enemy
@@ -136,8 +156,12 @@ def action():
                          player_damage=player_damage,
                          enemy_rolls=enemy_rolls,
                          enemy_damage=enemy_damage,
+                         enemy_name=enemy_name,
+                         enemy_exp=enemy_xp,
+                         enemy_gold=enemy_gold
                          )
 
+#What happens in the dungeon html page
 def enter_dungeon():
     dungeon = session['dungeon']
     dungeon['floor'] += 1
@@ -148,10 +172,12 @@ def enter_dungeon():
         dungeon['enemy'] = None
     else:
         dungeon['in_shop'] = False
+        
         dungeon['enemy'] = generate_enemy(dungeon['floor'])
     
     session['dungeon'] = dungeon
 
+#Create an enemy
 def generate_enemy(floor):
 
     enemy_index = enemy_stats(floor)
@@ -160,10 +186,14 @@ def generate_enemy(floor):
     
     return enemy_type
 
+#enemy defeated, rewards given, turn = 'reward'
 def enemy_defeated():
     player = session['player']
     enemy = session['dungeon']['enemy']
+
+    session['turn'] = 'reward'
     
+    #player gets the loot
     player['gold'] += enemy['gold_reward']
     player['exp'] += enemy['exp_reward']
     
@@ -176,7 +206,7 @@ def enemy_defeated():
         player['exp_to_level'] = int(player['exp_to_level'] * 1.5)
         
     
-    session['dungeon']['enemy'] = None
+    #session['dungeon']['enemy'] = None
     session['player'] = player
 
 @app.route('/upgrade', methods=['POST'])
